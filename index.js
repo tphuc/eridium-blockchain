@@ -17,14 +17,14 @@ app.use(function (req, res, next) {
     res.setHeader('Access-Control-Allow-Origin', '*');
 
     // Request methods you wish to allow
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+    res.setHeader('Access-Control-Allow-Methods', '*');
 
     // Request headers you wish to allow
-    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+    res.setHeader('Access-Control-Allow-Headers', '*');
 
-    // Set to true if you need the website to include cookies in the requests sent
-    // to the API (e.g. in case you use sessions)
-    res.setHeader('Access-Control-Allow-Credentials', true);
+    // // Set to true if you need the website to include cookies in the requests sent
+    // // to the API (e.g. in case you use sessions)
+    // res.setHeader('Access-Control-Allow-Credentials', true);
     next();
 });
 
@@ -36,6 +36,9 @@ let controller = new Controller()
 
 app.post('/transaction', controller.postTransaction.bind(controller));
 app.get('/transactions', controller.getTransactions.bind(controller));
+app.get('/transactions/:hash', controller.getTransactionByHash.bind(controller));
 app.post('/mine', controller.mine.bind(controller));
 app.get('/blockchain', controller.getBlockchain.bind(controller));
 app.get('/blockchain/:id', controller.getBlockById.bind(controller));
+app.get('/wallet-transactions', controller.getWalletTransac.bind(controller) )
+app.get('/wallet-balance', controller.getWalletBalance.bind(controller) )

@@ -28,13 +28,21 @@ export class Controller {
 
 
     getTransactions(req, res) {
-        res.json(this.blockchain.pendingTransactions)
+        let transactions = this.blockchain.blocks.filter(item => item.transactions?.length).reduce(
+            (prev, current) => [...prev, ...current.transactions],
+            []
+          );
+        res.json([...transactions, ...this.blockchain.pendingTransactions])
     }
 
 
     getTransactionByHash(req, res){
-        let { hash } = req.body
-        let transaction = this.blockchain.pendingTransactions.find(item => item.hash == hash)
+        let { hash } = req.params
+        let transactions = this.blockchain.blocks.filter(item => item.transactions?.length).reduce(
+            (prev, current) => [...prev, ...current.transactions],
+            []
+        );
+        let transaction = [...transactions, ...this.blockchain.pendingTransactions].find(item => item?.hash == hash)
         res.json(transaction)
     }
 
@@ -73,6 +81,17 @@ export class Controller {
         }
         
         
+    }
+
+
+    getWalletTransac(req, res){
+        let address = req.params.address || req.query.address
+        res.json(this.blockchain.getAllTransactionsForWallet(address))   
+    }
+
+    getWalletBalance(req, res){
+        let address = req.params.address || req.query.address
+        res.json(this.blockchain.getBalanceOfAddress(address))   
     }
 
 

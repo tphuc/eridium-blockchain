@@ -6,7 +6,7 @@ var EC = elliptic.ec
 
 // Create and initialize EC context
 // (better do it once and reuse it)
-var ec = new  EC('secp256k1');
+var ec = new EC('secp256k1');
 
 
 class Transaction {
@@ -40,22 +40,23 @@ class Transaction {
      * @param {string} signingKey
      */
     signTransaction(signingKey) {
+   
+            let key = ec.keyFromPrivate(signingKey)
+            // You can only send a transaction from the wallet that is linked to your
+            // key. So here we check if the fromAddress matches your publicKey
+            if (key.getPublic('hex') !== this.fromAddress) {
+                throw 'You cannot sign transactions for other wallets!'
+            }
 
-        let key = ec.keyFromPrivate(signingKey)
-        // You can only send a transaction from the wallet that is linked to your
-        // key. So here we check if the fromAddress matches your publicKey
-        if (key.getPublic('hex') !== this.fromAddress) {
-            throw 'You cannot sign transactions for other wallets!'
-        }
 
+            // Calculate the hash of this transaction, sign it with the key
+            // and store it inside the transaction object
+            const hashTx = this.calculateHash();
+            const sig = key.sign(hashTx, 'base64');
 
-        // Calculate the hash of this transaction, sign it with the key
-        // and store it inside the transaction object
-        const hashTx = this.calculateHash();
-        const sig = key.sign(hashTx, 'base64');
-
-        this.signature = sig.toDER('hex');
+            this.signature = sig.toDER('hex');
     }
+
 
     /**
      * Checks if the signature is valid (transaction has not been tampered with).

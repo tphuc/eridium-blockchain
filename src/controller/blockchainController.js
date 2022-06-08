@@ -1,6 +1,12 @@
 import { Blockchain } from "../model/blockchain.js";
 import { Transaction } from "../model/transaction.js";
 
+import elliptic from 'elliptic' 
+const EC = elliptic.ec
+
+// You can use any elliptic curve you want
+const ec = new EC('secp256k1');
+
 
 
 export class Controller {
@@ -14,6 +20,11 @@ export class Controller {
     postTransaction(req, res) {
         try {
             const { from, to, amount, sign } = req.body;
+
+            if(!from || !to || !amount || !sign){
+                res.status(406)
+                res.json({ error:"Invalid fields" })
+            }
             let tx = new Transaction(from, to, amount);
             tx.signTransaction(sign)
             this.blockchain.addTransaction(tx)
@@ -21,7 +32,7 @@ export class Controller {
         }
         catch (error) {
             res.status(406)
-            res.json({ error })
+            res.json({ error:"Request failed" })
         }
     }
 
@@ -94,6 +105,19 @@ export class Controller {
         res.json(this.blockchain.getBalanceOfAddress(address))   
     }
 
+
+    generateKeyPair(req, res){
+
+        // Generate a new key pair and convert them to hex-strings
+        const key = ec.genKeyPair();
+        const publicKey = key.getPublic('hex');
+        const privateKey = key.getPrivate('hex');
+        res.json({
+            publicKey,
+            privateKey
+        })
+
+    }
 
 
 

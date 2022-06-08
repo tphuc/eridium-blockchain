@@ -42,3 +42,4 @@ app.get('/blockchain', controller.getBlockchain.bind(controller));
 app.get('/blockchain/:id', controller.getBlockById.bind(controller));
 app.get('/wallet-transactions', controller.getWalletTransac.bind(controller) )
 app.get('/wallet-balance', controller.getWalletBalance.bind(controller) )
+app.post('/wallet-create', controller.generateKeyPair.bind(controller) )
